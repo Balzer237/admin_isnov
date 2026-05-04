@@ -1,0 +1,64 @@
+<div class="flex h-screen bg-primary-50">
+  <!-- Overlay for mobile -->
+  <div
+    class="sidebar-overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-30 transition-opacity duration-300"
+    [class.active]="!isCollapsed && isMobile"
+    (click)="isCollapsed = true"
+  ></div>
+
+  <aside
+    class="fixed left-0 top-0 bottom-0 z-40 overflow-y-auto transition-all duration-300 ease-in-out transform"
+    [class.collapsed]="isCollapsed"
+    [class.mobile-open]="!isCollapsed && isMobile"
+    [@sidebarWidth]="isCollapsed ? 'collapsed' : 'expanded'"
+    style="background: white; border-right: 1px solid #e5e7eb; box-shadow: 2px 0 8px rgba(0,0,0,0.05);"
+  >
+    <!-- Sidebar Header / Logo -->
+    <div class="sidebar-header flex items-center gap-3 p-4 border-b border-gray-200 h-16">
+      <div class="logo-icon flex items-center justify-center w-8 h-8 rounded-lg bg-secondary-600 shadow-md">
+        <span class="text-white font-bold text-sm">BI</span>
+      </div>
+      <span class="logo-text font-heading text-sm font-semibold tracking-tight text-gray-900">Portail BI</span>
+
+      <!-- Mobile close button -->
+      <button
+        *ngIf="!isCollapsed && isMobile"
+        (click)="isCollapsed = true"
+        class="ml-auto p-1 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+        aria-label="Close sidebar"
+      >
+        <fa-icon [icon]="faClose" class="w-5 h-5"></fa-icon>
+      </button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="p-4 space-y-6">
+      <div *ngFor="let section of sections" class="space-y-2">
+        <!-- Section Title -->
+        <div *ngIf="!isCollapsed" class="sidebar-section-title px-3 py-2 text-[0.75rem] font-semibold uppercase tracking-wider text-gray-500">
+          {{ section.title }}
+        </div>
+
+        <!-- Navigation Items -->
+        <div class="space-y-1">
+          <app-nav-item
+            *ngFor="let item of section.items"
+            [item]="item"
+            [isCollapsed]="isCollapsed"
+            [expanded]="isItemExpanded(item.id)"
+            (toggle)="toggleItem($event)"
+          ></app-nav-item>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main
+    class="flex-1 transition-all duration-300 ease-in-out min-h-screen"
+    [style.marginLeft.px]="isCollapsed ? 80 : 256"
+    (click)="isMobile && !isCollapsed && (isCollapsed = true)"
+  >
+    <ng-content></ng-content>
+  </main>
+</div>

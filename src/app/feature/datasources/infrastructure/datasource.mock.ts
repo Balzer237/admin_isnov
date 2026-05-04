@@ -1,0 +1,80 @@
+import { Datasource, DatasourceType, ConnectionStatus } from '../domain/datasource.model';
+
+export const mockDatasources: Datasource[] = [
+  {
+    id: '1',
+    name: 'Base de données principale',
+    type: DatasourceType.POSTGRESQL,
+    host: 'localhost',
+    port: 5432,
+    database: 'main_db',
+    schema: 'public',
+    username: 'admin',
+    password: 'password123',
+    timeoutMs: 30000,
+    status: ConnectionStatus.CONNECTED,
+    lastCheckedAt: new Date('2023-10-01T10:00:00Z'),
+    createdAt: new Date('2023-09-01T10:00:00Z'),
+    updatedAt: new Date('2023-10-01T10:00:00Z')
+  },
+  {
+    id: '2',
+    name: 'Data Warehouse',
+    type: DatasourceType.MYSQL,
+    host: 'warehouse.example.com',
+    port: 3306,
+    database: 'dw',
+    username: 'user',
+    password: 'pass',
+    timeoutMs: 30000,
+    status: ConnectionStatus.ERROR,
+    lastCheckedAt: new Date('2023-10-02T10:00:00Z'),
+    createdAt: new Date('2023-09-02T10:00:00Z'),
+    updatedAt: new Date('2023-10-02T10:00:00Z')
+  },
+  {
+    id: '3',
+    name: 'Test Oracle',
+    type: DatasourceType.ORACLE,
+    host: 'oracle.test.com',
+    port: 1521,
+    database: 'testdb',
+    schema: 'testschema',
+    username: 'oracle_user',
+    password: 'oracle_pass',
+    timeoutMs: 30000,
+    status: ConnectionStatus.UNTESTED,
+    createdAt: new Date('2023-09-03T10:00:00Z'),
+    updatedAt: new Date('2023-09-03T10:00:00Z')
+  },
+  {
+    id: '4',
+    name: 'SQL Server Prod',
+    type: DatasourceType.SQLSERVER,
+    host: 'sqlserver.prod.com',
+    port: 1433,
+    database: 'prod_db',
+    username: 'prod_user',
+    password: 'prod_pass',
+    timeoutMs: 30000,
+    status: ConnectionStatus.CONNECTED,
+    lastCheckedAt: new Date('2023-10-03T10:00:00Z'),
+    createdAt: new Date('2023-09-04T10:00:00Z'),
+    updatedAt: new Date('2023-10-03T10:00:00Z')
+  },
+  {
+    id: '5',
+    name: 'H2 In-Memory',
+    type: DatasourceType.H2,
+    host: 'localhost',
+    port: 9092,
+    database: 'mem:testdb',
+    username: 'sa',
+    password: '',
+    timeoutMs: 30000,
+    status: ConnectionStatus.CONNECTED,
+    lastCheckedAt: new Date('2023-10-04T10:00:00Z'),
+    createdAt: new Date('2023-09-05T10:00:00Z'),
+    updatedAt: new Date('2023-10-04T10:00:00Z')
+  }
+];

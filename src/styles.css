@@ -1,3 +1,243 @@
-/* You can add global styles to this file, and also import other style files */
-
+/* Main styles */
 @import 'tailwindcss';
+
+/* Theme configuration */
+@theme {
+  /* Primary color - White / Light Gray (surfaces, backgrounds) */
+  --color-primary-50: #f9fafb;
+  --color-primary-100: #f3f4f6;
+  --color-primary-200: #e5e7eb;
+  --color-primary-300: #d1d5db;
+  --color-primary-400: #9ca3af;
+  --color-primary-500: #6b7280;
+  --color-primary-600: #4b5563;
+  --color-primary-700: #374151;
+  --color-primary-800: #1f2937;
+  --color-primary-900: #111827;
+
+  /* Secondary color - Blue 500 (accents, actions) */
+  --color-secondary-50: #eff6ff;
+  --color-secondary-100: #dbeafe;
+  --color-secondary-200: #bfdbfe;
+  --color-secondary-300: #93c5fd;
+  --color-secondary-400: #60a5fa;
+  --color-secondary-500: #3b82f6;
+  --color-secondary-600: #2563eb;
+  --color-secondary-700: #1d4ed8;
+  --color-secondary-800: #1e40af;
+  --color-secondary-900: #1e3a8a;
+
+  /* Global typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+
+  --font-heading: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, sans-serif;
+
+  --font-size-heading-xl: 1.875rem;
+  --font-size-heading-lg: 1.5rem;
+  --font-size-heading-md: 1.25rem;
+  --font-size-heading-sm: 1.125rem;
+
+  --line-height-heading: 1.2;
+
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+
+  --font-weight-heading: 600;
+}
+
+/* Custom global styles */
+:root {
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-heading: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, sans-serif;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--color-primary-50);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Global heading styles */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: var(--line-height-heading);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-primary-900);
+  margin: 0 0 1rem 0;
+}
+
+h1 {
+  font-size: var(--font-size-heading-xl);
+}
+
+h2 {
+  font-size: var(--font-size-heading-lg);
+}
+
+h3 {
+  font-size: var(--font-size-heading-md);
+}
+
+h4 {
+  font-size: var(--font-size-heading-sm);
+}
+
+/* Subtitles and secondary text */
+.subtitle,
+.text-subtitle,
+.text-secondary,
+.text-muted,
+small,
+p.subtitle,
+.text-gray-500,
+.text-gray-600 {
+  font-family: var(--font-family);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-primary-500);
+  font-weight: 400;
+}
+
+/* Sidebar navigation styles (CSS variables) */
+/* these are used in sidebar.component.css */
+
+/* Card component defaults */
+app-card, .card {
+  background: white;
+  border-color: var(--color-primary-200);
+}
+
+/* Button primary style */
+.btn-primary,
+button[class*="primary"],
+a.btn-primary {
+  background-color: var(--color-secondary-600);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-secondary-700);
+}
+
+/* Links */
+a {
+  color: var(--color-secondary-600);
+}
+
+a:hover {
+  color: var(--color-secondary-700);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+/* Custom global styles */
+:root {
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-heading: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, sans-serif;
+}
+
+body {
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Global heading styles */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: var(--line-height-heading);
+  letter-spacing: var(--tracking-tight);
+  color: #1f2937;
+  margin: 0 0 1rem 0;
+}
+
+h1 {
+  font-size: var(--font-size-heading-xl);
+}
+
+h2 {
+  font-size: var(--font-size-heading-lg);
+}
+
+h3 {
+  font-size: var(--font-size-heading-md);
+}
+
+h4 {
+  font-size: var(--font-size-heading-sm);
+}
+
+/* Subtitles and secondary text */
+.subtitle,
+.text-subtitle,
+.text-secondary,
+.text-muted,
+small,
+p.subtitle,
+.text-gray-600,
+.text-gray-500 {
+  font-family: var(--font-family);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+/* Sidebar navigation active states */
+.active-nav-item {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: white !important;
+  font-weight: 600;
+  position: relative;
+}
+
+.active-nav-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #60a5fa 0%, #93c5fd 100%);
+  border-radius: 0 2px 2px 0;
+}
+
+.active-nav-item .nav-icon {
+  color: #60a5fa !important;
+}
+
+.active-sub-item {
+  background: rgba(96, 165, 250, 0.2) !important;
+  color: #60a5fa !important;
+  font-weight: 500;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
