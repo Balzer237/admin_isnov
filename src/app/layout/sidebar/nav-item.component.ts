@@ -12,7 +12,6 @@ import {
   faChevronRight,
   faCog,
   faDatabase,
-  faGaugeHigh,
   faShieldAlt,
   faSliders,
   faTable,
@@ -29,29 +28,46 @@ import { SidebarItem } from '../../core/models/navigation.model';
     <div>
       <!-- Simple navigation link (no children) -->
       <a
-        *ngIf="!item.children || item.children.length === 0"
+        *ngIf="isLeafItem && item.isActive"
         [routerLink]="item.route"
         routerLinkActive="active-nav-item"
         [routerLinkActiveOptions]="{ exact: false }"
         class="nav-item group"
         [title]="isCollapsed ? item.label : ''"
         [class.collapsed]="isCollapsed"
+        [attr.aria-disabled]="null"
       >
         <fa-icon [icon]="icon" class="nav-icon"></fa-icon>
         <span *ngIf="!isCollapsed" class="nav-text">{{ item.label }}</span>
       </a>
 
+      <div
+        *ngIf="isLeafItem && !item.isActive"
+        class="nav-item disabled-nav-item"
+        [title]="isCollapsed ? item.label : ''"
+        [class.collapsed]="isCollapsed"
+        aria-disabled="true"
+        tabindex="-1"
+      >
+        <fa-icon [icon]="icon" class="nav-icon"></fa-icon>
+        <span *ngIf="!isCollapsed" class="nav-text">{{ item.label }}</span>
+      </div>
+
       <!-- Navigation with children (expandable) -->
       <div *ngIf="item.children && item.children.length > 0">
         <button
           type="button"
-          (click)="toggle.emit(item.id)"
+          (click)="item.isActive && toggle.emit(item.id)"
           class="w-full nav-item group"
           [ngClass]="{
-            'active-nav-item': expanded
+            'active-nav-item': expanded,
+            'disabled-nav-item': !item.isActive
           }"
           [title]="isCollapsed ? item.label : ''"
           [class.collapsed]="isCollapsed"
+          [disabled]="!item.isActive"
+          [attr.aria-disabled]="!item.isActive"
+          [tabIndex]="item.isActive ? 0 : -1"
         >
           <fa-icon [icon]="icon" class="nav-icon"></fa-icon>
           <span *ngIf="!isCollapsed" class="nav-text flex-1 text-left">{{ item.label }}</span>
@@ -72,11 +88,14 @@ import { SidebarItem } from '../../core/models/navigation.model';
         >
           <a
             *ngFor="let child of item.children"
-            [routerLink]="child.route"
+            [routerLink]="child.isActive ? child.route : null"
             routerLinkActive="active-sub-item"
             [routerLinkActiveOptions]="{ exact: false }"
             class="nav-item group text-sm"
             [class.active-sub-item]="isActive(child.route)"
+            [class.disabled-nav-item]="!child.isActive"
+            [attr.aria-disabled]="!child.isActive"
+            [attr.tabindex]="child.isActive ? 0 : -1"
           >
             {{ child.label }}
           </a>
@@ -112,10 +131,13 @@ export class NavItemComponent implements OnChanges {
     database: faDatabase,
     table: faTable,
     chartBar: faChartBar,
-    dashboard: faGaugeHigh,
     bars: faBars,
     sliders: faSliders
   };
+
+  get isLeafItem(): boolean {
+    return !this.item.children || this.item.children.length === 0;
+  }
 
   get toggleIcon(): IconDefinition {
     return this.expanded ? this.faChevronDown : this.faChevronRight;
@@ -127,8 +149,11 @@ export class NavItemComponent implements OnChanges {
     }
   }
 
-   isActive(route: string | undefined): boolean {
-     if (!route) return false;
-     return false; // Router will handle this via routerLinkActive
-   }
- }
+  isActive(route: string | undefined): boolean {
+    if (!route) {
+      return false;
+    }
+
+    return false;
+  }
+}

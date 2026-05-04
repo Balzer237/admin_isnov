@@ -1,90 +1,128 @@
-export interface SqlView {
-  id: string;
+export enum VizType {
+  TABLE = 'table',
+  BAR = 'bar',
+  LINE = 'line',
+  AREA = 'area',
+  STACKED_BAR = 'stacked_bar',
+  PIE = 'pie',
+  DONUT = 'donut',
+  SCATTER = 'scatter',
+  KPI = 'kpi'
+}
+
+export enum ColumnType {
+  TEXT = 'text',
+  NUMBER = 'number',
+  DATE = 'date',
+  DATETIME = 'datetime',
+  BOOLEAN = 'boolean',
+  JSON = 'json'
+}
+
+export enum ParamType {
+  TEXT = 'text',
+  NUMBER = 'number',
+  DATE = 'date',
+  DATETIME = 'datetime',
+  BOOLEAN = 'boolean',
+  LIST_STATIC = 'list_static',
+  LIST_SQL = 'list_sql'
+}
+
+export enum SqlViewStatus {
+  DRAFT = 'draft',
+  READY = 'ready'
+}
+
+export interface ColumnMeta {
   name: string;
-  description?: string;
-  datasourceId: string;
-  query: string;
-  parameters: SqlViewParameter[];
-  columns: SqlViewColumn[];
-  visualization: SqlViewVisualization;
-  createdAt: Date;
-  updatedAt: Date;
+  type: ColumnType;
+}
+
+export interface VizCompatibilityResult {
+  type: VizType;
+  compatible: boolean;
+  confidence: 'high' | 'medium' | 'low';
+  reason?: string;
+  suggestedMapping: {
+    xAxis?: string;
+    yAxis?: string[];
+    label?: string;
+    value?: string;
+  };
+}
+
+export interface QueryResult {
+  columns: ColumnMeta[];
+  rows: Record<string, any>[];
+  rowCount: number;
+  executionTimeMs: number;
+  compatibleViz: VizCompatibilityResult[];
+}
+
+export interface VizMapping {
+  xAxis?: string;
+  yAxis?: string[];
+  label?: string;
+  value?: string;
+}
+
+export interface VizConfig {
+  type: VizType;
+  mapping: VizMapping;
+  title: string;
+  useCustomColors: boolean;
+  colors?: string[];
 }
 
 export interface SqlViewParameter {
   name: string;
-  type: ParameterType;
-  required: boolean;
+  label: string;
+  type: ParamType;
   defaultValue?: any;
-  description?: string;
+  required: boolean;
+  dependsOn?: string;
+  listQuery?: string;
+  staticOptions?: Array<{ label: string; value: any }>;
 }
 
-export interface SqlViewColumn {
+export interface SqlViewCategory {
+  id: string;
+  label: string;
+  color: string;
+}
+
+export interface SqlView {
+  id: string;
   name: string;
-  type: ColumnType;
-  nullable: boolean;
-  description?: string;
+  datasourceId: string;
+  sql: string;
+  parameters: SqlViewParameter[];
+  status: SqlViewStatus;
+  categoryId?: string;
+  vizConfig?: VizConfig | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export interface SqlViewVisualization {
-  type: VisualizationType;
-  config: VisualizationConfig;
-}
-
-export type VisualizationConfig = {
-  title?: string;
-  xAxis?: string;
-  yAxis?: string;
-  groupBy?: string;
-  colors?: string[];
-  showLegend?: boolean;
-  showGrid?: boolean;
-} & Record<string, any>;
-
-export enum ParameterType {
-  STRING = 'string',
-  NUMBER = 'number',
-  DATE = 'date',
-  BOOLEAN = 'boolean',
-}
-
-export enum ColumnType {
-  STRING = 'string',
-  NUMBER = 'number',
-  DATE = 'date',
-  BOOLEAN = 'boolean',
-  JSON = 'json',
-}
-
-export enum VisualizationType {
-  TABLE = 'table',
-  BAR_CHART = 'bar_chart',
-  LINE_CHART = 'line_chart',
-  PIE_CHART = 'pie_chart',
-  SCATTER_PLOT = 'scatter_plot',
-}
-
-// DTOs for API communication
 export interface CreateSqlViewDto {
   name: string;
-  description?: string;
   datasourceId: string;
-  query: string;
+  sql: string;
+  parameters: SqlViewParameter[];
+  categoryId?: string;
+  vizConfig?: VizConfig | null;
+  status?: SqlViewStatus;
 }
 
 export interface UpdateSqlViewDto {
   name?: string;
-  description?: string;
-  query?: string;
-  visualization?: SqlViewVisualization;
+  datasourceId?: string;
+  sql?: string;
+  parameters?: SqlViewParameter[];
+  categoryId?: string;
+  vizConfig?: VizConfig | null;
+  status?: SqlViewStatus;
 }
 
-export interface ExecuteSqlViewDto {
-  parameters: Record<string, any>;
-}
-
-export interface SqlViewExecutionResult {
-  columns: SqlViewColumn[];
-  rows: Record<string, any>[];
-  executionTime: number;
-}
+export { VizType as VisualizationType, ParamType as ParameterType };

@@ -1,129 +1,252 @@
-import { Injectable } from '@angular/core';
+import {
+  ColumnMeta,
+  ColumnType,
+  CreateSqlViewDto,
+  ParamType,
+  QueryResult,
+  SqlView,
+  SqlViewCategory,
+  SqlViewStatus,
+  UpdateSqlViewDto,
+  VizCompatibilityResult,
+  VizType
+} from '../domain/sql-view.model';
 import { SqlViewRepository } from '../domain/sql-view.repository';
-import { SqlView, CreateSqlViewDto, UpdateSqlViewDto, ExecuteSqlViewDto, SqlViewExecutionResult, VisualizationType } from '../domain/sql-view.model';
+import {
+  mockDashboardUsage,
+  mockListSqlValues,
+  mockRawResults,
+  mockSqlViewCategories,
+  mockSqlViews
+} from './sql-view.mock';
 import { SqlViewMapper } from './sql-view.mapper';
-import { mockSqlViews } from './sql-view.mock';
 
-@Injectable({
-  providedIn: 'root'
-})
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export class SqlViewRepositoryImpl implements SqlViewRepository {
-  private sqlViews = [...mockSqlViews];
+  private sqlViews = mockSqlViews.map(SqlViewMapper.cloneView);
+  private categories = mockSqlViewCategories.map(SqlViewMapper.cloneCategory);
 
   async getAll(): Promise<SqlView[]> {
-    // TODO: Replace with actual API call
-    await fetch('');
-    return this.sqlViews.map(SqlViewMapper.fromApiToDomain);
+    // const response = await fetch('', { method: 'GET' });
+    // return await response.json();
+    await wait(240);
+    return this.sqlViews.map(SqlViewMapper.cloneView);
   }
 
   async getById(id: string): Promise<SqlView> {
-    // TODO: Replace with actual API call
-    await fetch('');
-    const sqlView = this.sqlViews.find(sv => sv.id === id);
+    // const response = await fetch('', { method: 'GET' });
+    // return await response.json();
+    await wait(180);
+    const sqlView = this.sqlViews.find((item) => item.id === id);
     if (!sqlView) {
-      throw new Error(`SQL View with id ${id} not found`);
+      throw new Error('Vue SQL introuvable.');
     }
-    return SqlViewMapper.fromApiToDomain(sqlView);
+
+    return SqlViewMapper.cloneView(sqlView);
   }
 
   async create(dto: CreateSqlViewDto): Promise<SqlView> {
-    // TODO: Replace with actual API call
-    await fetch('');
-    const newSqlView = {
-      id: Date.now().toString(),
-      ...dto,
-      parameters: [],
-      columns: [],
-      visualization: { type: VisualizationType.TABLE, config: {} },
+    // const response = await fetch('', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify(dto)
+    // });
+    // return await response.json();
+    await wait(220);
+    const created: SqlView = {
+      id: `sqlv-${Date.now()}`,
+      name: dto.name,
+      datasourceId: dto.datasourceId,
+      sql: dto.sql,
+      parameters: dto.parameters.map((parameter) => ({ ...parameter })),
+      categoryId: dto.categoryId,
+      vizConfig: dto.vizConfig ?? null,
+      status: dto.vizConfig ? SqlViewStatus.READY : SqlViewStatus.DRAFT,
       createdAt: new Date(),
       updatedAt: new Date()
     };
-    this.sqlViews.push(newSqlView);
-    return SqlViewMapper.fromApiToDomain(newSqlView);
+
+    this.sqlViews.unshift(created);
+    return SqlViewMapper.cloneView(created);
   }
 
   async update(id: string, dto: UpdateSqlViewDto): Promise<SqlView> {
-    // TODO: Replace with actual API call
-    await fetch('');
-    const index = this.sqlViews.findIndex(sv => sv.id === id);
+    // await fetch('', {
+    //   method: 'PATCH',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify(dto)
+    // });
+    await wait(220);
+    const index = this.sqlViews.findIndex((item) => item.id === id);
     if (index === -1) {
-      throw new Error(`SQL View with id ${id} not found`);
+      throw new Error('Vue SQL introuvable.');
     }
+
     this.sqlViews[index] = {
       ...this.sqlViews[index],
       ...dto,
+      parameters: dto.parameters
+        ? dto.parameters.map((parameter) => ({ ...parameter }))
+        : this.sqlViews[index].parameters,
+      vizConfig:
+        dto.vizConfig === undefined
+          ? this.sqlViews[index].vizConfig
+          : dto.vizConfig
+            ? {
+                ...dto.vizConfig,
+                mapping: {
+                  ...dto.vizConfig.mapping,
+                  yAxis: dto.vizConfig.mapping.yAxis ? [...dto.vizConfig.mapping.yAxis] : undefined
+                },
+                colors: dto.vizConfig.colors ? [...dto.vizConfig.colors] : undefined
+              }
+            : null,
+      status: dto.vizConfig ? SqlViewStatus.READY : dto.status ?? SqlViewStatus.DRAFT,
       updatedAt: new Date()
     };
-    return SqlViewMapper.fromApiToDomain(this.sqlViews[index]);
+
+    return SqlViewMapper.cloneView(this.sqlViews[index]);
   }
 
   async delete(id: string): Promise<void> {
-    // TODO: Replace with actual API call
-    await fetch('');
-    const index = this.sqlViews.findIndex(sv => sv.id === id);
-    if (index === -1) {
-      throw new Error(`SQL View with id ${id} not found`);
-    }
-    this.sqlViews.splice(index, 1);
+    // await fetch('', { method: 'DELETE' });
+    await wait(180);
+    this.sqlViews = this.sqlViews.filter((item) => item.id !== id);
   }
 
-  async execute(id: string, dto: ExecuteSqlViewDto): Promise<SqlViewExecutionResult> {
-    // TODO: Replace with actual API call
-    await fetch('');
-    const sqlView = this.sqlViews.find(sv => sv.id === id);
+  async execute(id: string, params: Record<string, any>, limit: number): Promise<QueryResult> {
+    // const response = await fetch('', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ params, limit })
+    // });
+    // return await response.json();
+    await wait(420);
+    const sqlView = this.sqlViews.find((item) => item.id === id);
     if (!sqlView) {
-      throw new Error(`SQL View with id ${id} not found`);
+      throw new Error('Vue SQL introuvable.');
     }
 
-    // Mock execution result based on the SQL View
-    const mockRows = this.generateMockRows(sqlView);
+    return this.buildResultForSql(sqlView.sql, params, limit, sqlView.vizConfig?.type);
+  }
 
-    return {
-      columns: sqlView.columns,
-      rows: mockRows,
-      executionTime: Math.random() * 1000 + 100 // Random execution time between 100-1100ms
+  async executeRaw(
+    sql: string,
+    datasourceId: string,
+    params: Record<string, any>,
+    limit: number
+  ): Promise<QueryResult> {
+    // const response = await fetch('', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ sql, datasourceId, params, limit })
+    // });
+    // return await response.json();
+    await wait(420);
+    return this.buildResultForSql(sql, params, limit);
+  }
+
+  async duplicate(id: string): Promise<SqlView> {
+    await wait(180);
+    const original = await this.getById(id);
+    const duplicate: SqlView = {
+      ...original,
+      id: `sqlv-${Date.now()}`,
+      name: `${original.name} (copie)`,
+      status: original.vizConfig ? SqlViewStatus.READY : SqlViewStatus.DRAFT,
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
+    this.sqlViews.unshift(duplicate);
+    return SqlViewMapper.cloneView(duplicate);
   }
 
-  async getCompatibleDatasources(): Promise<{ id: string; name: string }[]> {
-    // TODO: Replace with actual API call
-    await fetch('');
-    // Mock datasources - in real app, this would come from the datasources module
+  async getCategories(): Promise<SqlViewCategory[]> {
+    // const response = await fetch('', { method: 'GET' });
+    // return await response.json();
+    await wait(120);
+    return this.categories.map(SqlViewMapper.cloneCategory);
+  }
+
+  async createCategory(label: string, color = '#2563EB'): Promise<SqlViewCategory> {
+    // const response = await fetch('', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ label, color })
+    // });
+    // return await response.json();
+    await wait(120);
+    const category: SqlViewCategory = {
+      id: `cat-${Date.now()}`,
+      label,
+      color
+    };
+    this.categories.unshift(category);
+    return SqlViewMapper.cloneCategory(category);
+  }
+
+  getDashboardDependencies(id: string): string[] {
+    return [...(mockDashboardUsage[id] ?? [])];
+  }
+
+  getMockListValues(parameterName: string): Array<{ label: string; value: any }> {
+    return [...(mockListSqlValues[parameterName] ?? [])];
+  }
+
+  private buildResultForSql(
+    sql: string,
+    params: Record<string, any>,
+    limit: number,
+    preferredViz?: VizType | null
+  ): QueryResult {
+    const normalized = sql.toLowerCase();
+    const preset =
+      normalized.includes('sales_channel') || normalized.includes('canal')
+        ? mockRawResults['pie']
+        : normalized.includes('sessions') || normalized.includes('conversion')
+          ? mockRawResults['scatter']
+          : normalized.includes('date_trunc') || normalized.includes('month') || normalized.includes('mois')
+            ? mockRawResults['revenue']
+            : mockRawResults['table'];
+
+    const result: QueryResult = {
+      columns: preset.columns.map((column) => ({ ...column })),
+      rows: preset.rows.slice(0, limit).map((row) => ({ ...row })),
+      rowCount: Math.min(preset.rowCount, limit),
+      executionTimeMs: preset.executionTimeMs + Math.round(Object.keys(params).length * 12),
+      compatibleViz: this.injectPreferredViz(preset.compatibleViz, preferredViz)
+    };
+
+    return result;
+  }
+
+  private injectPreferredViz(
+    compatibleViz: VizCompatibilityResult[],
+    preferredViz?: VizType | null
+  ): VizCompatibilityResult[] {
+    if (!preferredViz) {
+      return compatibleViz.map((item) => ({ ...item, suggestedMapping: { ...item.suggestedMapping } }));
+    }
+
+    const existing = compatibleViz.find((item) => item.type === preferredViz);
+    if (existing) {
+      return compatibleViz.map((item) => ({
+        ...item,
+        confidence: item.type === preferredViz && item.compatible ? 'high' : item.confidence,
+        suggestedMapping: { ...item.suggestedMapping }
+      }));
+    }
+
     return [
-      { id: '1', name: 'PostgreSQL Production' },
-      { id: '2', name: 'MySQL Analytics' },
-      { id: '3', name: 'SQL Server Reporting' },
-      { id: '4', name: 'Oracle Data Warehouse' }
+      {
+        type: preferredViz,
+        compatible: false,
+        confidence: 'low',
+        reason: 'Le backend indique que cette visualisation n’est pas compatible avec ce résultat.',
+        suggestedMapping: {}
+      },
+      ...compatibleViz.map((item) => ({ ...item, suggestedMapping: { ...item.suggestedMapping } }))
     ];
-  }
-
-  private generateMockRows(sqlView: SqlView): Record<string, any>[] {
-    const rows: Record<string, any>[] = [];
-    const rowCount = Math.floor(Math.random() * 20) + 5; // 5-25 rows
-
-    for (let i = 0; i < rowCount; i++) {
-      const row: Record<string, any> = {};
-      sqlView.columns.forEach(column => {
-        row[column.name] = this.generateMockValue(column.type);
-      });
-      rows.push(row);
-    }
-
-    return rows;
-  }
-
-  private generateMockValue(type: string): any {
-    switch (type) {
-      case 'string':
-        return `Value ${Math.floor(Math.random() * 100)}`;
-      case 'number':
-        return Math.floor(Math.random() * 10000);
-      case 'date':
-        return new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000);
-      case 'boolean':
-        return Math.random() > 0.5;
-      default:
-        return null;
-    }
   }
 }

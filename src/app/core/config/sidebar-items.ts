@@ -10,14 +10,16 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
         label: 'Tenants',
         icon: 'building',
         route: '/tenants',
-        section: 'organization'
+        section: 'organization',
+        isActive: false
       },
       {
         id: 'global-settings',
         label: 'Global Settings',
         icon: 'cog',
         route: '/settings/global',
-        section: 'organization'
+        section: 'organization',
+        isActive: false
       }
     ]
   },
@@ -30,21 +32,24 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
         label: 'Users',
         icon: 'users',
         route: '/users',
-        section: 'access'
+        section: 'access',
+        isActive: false
       },
       {
         id: 'roles',
         label: 'Roles',
         icon: 'shield',
         route: '/roles',
-        section: 'access'
+        section: 'access',
+        isActive: false
       },
       {
         id: 'role-groups',
         label: 'Role Groups',
         icon: 'userGroup',
         route: '/role-groups',
-        section: 'access'
+        section: 'access',
+        isActive: false
       }
     ]
   },
@@ -57,14 +62,16 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
         label: 'Datasources',
         icon: 'database',
         route: '/datasources',
-        section: 'data'
+        section: 'data',
+        isActive: true
       },
       {
         id: 'sql-views',
         label: 'SQL Views',
         icon: 'table',
         route: '/sql-views',
-        section: 'data'
+        section: 'data',
+        isActive: true
       }
     ]
   },
@@ -77,15 +84,10 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
         label: 'Reports',
         icon: 'chartBar',
         route: '/reports',
-        section: 'analytics'
-      },
-      {
-        id: 'dashboards',
-        label: 'Dashboards',
-        icon: 'dashboard',
-        route: '/dashboards',
-        section: 'analytics'
+        section: 'analytics',
+        isActive: false
       }
+      // Dashboards removed as per requirement
     ]
   },
   {
@@ -97,7 +99,8 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
         label: 'Menus',
         icon: 'bars',
         route: '/menus',
-        section: 'navigation'
+        section: 'navigation',
+        isActive: false
       }
     ]
   },
@@ -110,7 +113,8 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
         label: 'Tenant Settings',
         icon: 'sliders',
         route: '/settings/tenant',
-        section: 'configuration'
+        section: 'configuration',
+        isActive: false
       }
     ]
   }

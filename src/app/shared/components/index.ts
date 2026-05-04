@@ -12,5 +12,6 @@ export * from './page-layout/page-layout.component';
 export * from './page-toolbar/page-toolbar.component';
 export * from './pagination/pagination.component';
 export * from './skeleton-loader/skeleton-loader.component';
+export * from './sql-view-chart-renderer/sql-view-chart-renderer.component';
 export * from './table/table.component';
 export * from './toolbar/toolbar.component';

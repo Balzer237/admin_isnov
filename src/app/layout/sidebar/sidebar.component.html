@@ -11,36 +11,50 @@
     [class.collapsed]="isCollapsed"
     [class.mobile-open]="!isCollapsed && isMobile"
     [@sidebarWidth]="isCollapsed ? 'collapsed' : 'expanded'"
-    style="background: white; border-right: 1px solid #e5e7eb; box-shadow: 2px 0 8px rgba(0,0,0,0.05);"
   >
     <!-- Sidebar Header / Logo -->
-    <div class="sidebar-header flex items-center gap-3 p-4 border-b border-gray-200 h-16">
-      <div class="logo-icon flex items-center justify-center w-8 h-8 rounded-lg bg-secondary-600 shadow-md">
-        <span class="text-white font-bold text-sm">BI</span>
+    <div class="sidebar-header">
+      <div class="sidebar-brand">
+        <div class="logo-icon flex items-center justify-center w-8 h-8 rounded-lg bg-secondary-600 shadow-md">
+          <span class="text-white font-bold text-sm">BI</span>
+        </div>
+        <div *ngIf="!isCollapsed" class="brand-copy">
+          <span class="logo-text font-heading text-sm font-semibold tracking-tight text-gray-900">Portail BI</span>
+          <span class="logo-subtext">Data workspace</span>
+        </div>
       </div>
-      <span class="logo-text font-heading text-sm font-semibold tracking-tight text-gray-900">Portail BI</span>
+
+      <span *ngIf="!isCollapsed" class="sidebar-badge">Core</span>
 
       <!-- Mobile close button -->
       <button
         *ngIf="!isCollapsed && isMobile"
         (click)="isCollapsed = true"
-        class="ml-auto p-1 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+        class="mobile-close-button"
         aria-label="Close sidebar"
       >
         <fa-icon [icon]="faClose" class="w-5 h-5"></fa-icon>
       </button>
     </div>
 
+    <div *ngIf="!isCollapsed" class="sidebar-intro">
+      <p class="sidebar-intro-label">Navigation</p>
+      <p class="sidebar-intro-text">Accédez rapidement aux espaces de configuration, données et analyse.</p>
+    </div>
+
+    <div *ngIf="!isCollapsed" class="sidebar-divider"></div>
+
     <!-- Navigation -->
-    <nav class="p-4 space-y-6">
-      <div *ngFor="let section of sections" class="space-y-2">
+    <nav class="sidebar-nav">
+      <div *ngFor="let section of sections" class="sidebar-section-card">
         <!-- Section Title -->
-        <div *ngIf="!isCollapsed" class="sidebar-section-title px-3 py-2 text-[0.75rem] font-semibold uppercase tracking-wider text-gray-500">
-          {{ section.title }}
+        <div *ngIf="!isCollapsed" class="sidebar-section-title">
+          <span class="section-title-dot"></span>
+          <span>{{ section.title }}</span>
         </div>
 
         <!-- Navigation Items -->
-        <div class="space-y-1">
+        <div class="sidebar-items-group">
           <app-nav-item
             *ngFor="let item of section.items"
             [item]="item"

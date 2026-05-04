@@ -5,6 +5,7 @@ export interface SidebarItem {
   route?: string;
   children?: SidebarItem[];
   section: 'organization' | 'access' | 'data' | 'analytics' | 'navigation' | 'configuration';
+  isActive: boolean;
 }
 
 export interface SidebarSection {

@@ -1,90 +1,58 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SqlView } from '../domain/sql-view.model';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { SqlView } from '../domain/sql-view.model';
 
 @Component({
   selector: 'app-sql-view-delete-modal',
   standalone: true,
-  imports: [CommonModule, ModalComponent, ButtonComponent],
+  imports: [CommonModule, ModalComponent],
   template: `
-    <app-modal
-      [isOpen]="isOpen"
-      title="Confirmer la suppression"
-      (close)="onClose()">
-      <div class="delete-content">
-        <div class="warning-icon">⚠️</div>
-        <p class="message">
-          Êtes-vous sûr de vouloir supprimer la vue SQL <strong>{{ sqlView?.name }}</strong> ?
-        </p>
-        <p class="warning">
-          Cette action est irréversible et supprimera également toutes les visualisations associées.
-        </p>
-      </div>
+    <app-modal [isOpen]="isOpen" title="Supprimer la SQL View" (close)="close.emit()">
+      <div class="grid gap-5">
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <div class="text-sm text-slate-500">Vue concernée</div>
+          <div class="mt-1 text-lg font-semibold text-slate-900">{{ sqlView?.name }}</div>
+        </div>
 
-      <div class="modal-actions">
-        <app-button
-          type="button"
-          label="Annuler"
-          variant="secondary"
-          (click)="onClose()">
-        </app-button>
-        <app-button
-          type="button"
-          label="Supprimer"
-          variant="danger"
-          (click)="onConfirm()">
-        </app-button>
+        @if (dependencies.length > 0) {
+          <div class="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+            <div class="text-sm font-semibold text-amber-800">
+              Attention : utilisée dans {{ dependencies.length }} dashboard(s)
+            </div>
+            <ul class="mt-3 grid gap-2 text-sm text-amber-900">
+              @for (dependency of dependencies; track dependency) {
+                <li class="rounded-xl bg-white/80 px-3 py-2">{{ dependency }}</li>
+              }
+            </ul>
+          </div>
+        }
+
+        <div class="flex justify-end gap-3">
+          <button
+            type="button"
+            class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+            (click)="close.emit()"
+          >
+            Annuler
+          </button>
+          <button
+            type="button"
+            class="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
+            (click)="confirm.emit()"
+          >
+            Supprimer
+          </button>
+        </div>
       </div>
     </app-modal>
-  `,
-  styles: [`
-    .delete-content {
-      text-align: center;
-      padding: 1rem 0;
-    }
-
-    .warning-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
-
-    .message {
-      margin-bottom: 1rem;
-      color: #374151;
-    }
-
-    .warning {
-      color: #EF4444;
-      font-size: 0.875rem;
-      background-color: #FEF2F2;
-      padding: 0.75rem;
-      border-radius: 0.375rem;
-      border: 1px solid #FECACA;
-    }
-
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.75rem;
-      margin-top: 1.5rem;
-      padding-top: 1rem;
-      border-top: 1px solid #E5E7EB;
-    }
-  `]
+  `
 })
 export class SqlViewDeleteModalComponent {
   @Input() isOpen = false;
   @Input() sqlView: SqlView | null = null;
+  @Input() dependencies: string[] = [];
+
   @Output() close = new EventEmitter<void>();
   @Output() confirm = new EventEmitter<void>();
-
-  onClose(): void {
-    this.close.emit();
-  }
-
-  onConfirm(): void {
-    this.confirm.emit();
-  }
 }

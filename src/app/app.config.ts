@@ -6,7 +6,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { routes } from './app.routes';
 import { DATASOURCE_REPOSITORY } from './feature/datasources/domain/datasource.repository';
 import { DatasourceRepositoryImpl } from './feature/datasources/infrastructure/datasource.repository.impl';
-import { SQL_VIEW_REPOSITORY } from './feature/sql_views/domain/sql-view.repository';
+import { SQL_VIEW_REPOSITORY } from './feature/sql_views/application/sql-view.repository.token';
 import { SqlViewRepositoryImpl } from './feature/sql_views/infrastructure/sql-view.repository.impl';
 
 export const appConfig: ApplicationConfig = {

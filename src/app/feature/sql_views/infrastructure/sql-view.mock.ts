@@ -1,128 +1,280 @@
-import { SqlView, VisualizationType, ParameterType, ColumnType } from '../domain/sql-view.model';
+import {
+  ColumnType,
+  ParamType,
+  QueryResult,
+  SqlView,
+  SqlViewCategory,
+  SqlViewStatus,
+  VizType
+} from '../domain/sql-view.model';
+import { mockDatasources } from '../../datasources/infrastructure/datasource.mock';
+
+export const mockSqlViewCategories: SqlViewCategory[] = [
+  { id: 'cat-sales', label: 'Ventes', color: '#2563EB' },
+  { id: 'cat-finance', label: 'Finance', color: '#0F766E' },
+  { id: 'cat-ops', label: 'Opérations', color: '#D97706' },
+  { id: 'cat-growth', label: 'Growth', color: '#7C3AED' }
+];
 
 export const mockSqlViews: SqlView[] = [
   {
-    id: '1',
-    name: 'Ventes par Mois',
-    description: 'Analyse des ventes mensuelles avec tendances',
-    datasourceId: '1', // PostgreSQL
-    query: 'SELECT DATE_TRUNC(\'month\', order_date) as month, SUM(amount) as total_sales FROM orders WHERE order_date >= $start_date AND order_date <= $end_date GROUP BY month ORDER BY month',
+    id: 'sqlv-1',
+    name: 'Chiffre d’affaires mensuel',
+    datasourceId: '1',
+    sql: `SELECT DATE_TRUNC('month', created_at) AS mois,
+SUM(amount) AS revenu
+FROM orders
+WHERE created_at BETWEEN :date_debut AND :date_fin
+GROUP BY mois
+ORDER BY mois`,
     parameters: [
       {
-        name: 'start_date',
-        type: ParameterType.DATE,
-        required: true,
-        description: 'Date de début'
+        name: 'date_debut',
+        label: 'Date de début',
+        type: ParamType.DATE,
+        required: true
       },
       {
-        name: 'end_date',
-        type: ParameterType.DATE,
-        required: true,
-        description: 'Date de fin'
+        name: 'date_fin',
+        label: 'Date de fin',
+        type: ParamType.DATE,
+        required: true
       }
     ],
-    columns: [
-      { name: 'month', type: ColumnType.DATE, nullable: false, description: 'Mois' },
-      { name: 'total_sales', type: ColumnType.NUMBER, nullable: false, description: 'Ventes totales' }
-    ],
-    visualization: {
-      type: VisualizationType.LINE_CHART,
-      config: {
-        title: 'Évolution des Ventes Mensuelles',
-        xAxis: 'month',
-        yAxis: 'total_sales',
-        showLegend: false,
-        showGrid: true,
-        colors: ['#3B82F6']
-      }
+    categoryId: 'cat-sales',
+    vizConfig: {
+      type: VizType.LINE,
+      title: 'Évolution du chiffre d’affaires',
+      mapping: {
+        xAxis: 'mois',
+        yAxis: ['revenu']
+      },
+      useCustomColors: false
     },
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-15')
+    status: SqlViewStatus.READY,
+    createdAt: new Date('2026-03-12T09:30:00Z'),
+    updatedAt: new Date('2026-05-03T13:10:00Z')
   },
   {
-    id: '2',
-    name: 'Répartition par Catégorie',
-    description: 'Répartition des produits par catégorie',
-    datasourceId: '2', // MySQL
-    query: 'SELECT category, COUNT(*) as count, AVG(price) as avg_price FROM products GROUP BY category ORDER BY count DESC',
+    id: 'sqlv-2',
+    name: 'Répartition des ventes par canal',
+    datasourceId: '4',
+    sql: `SELECT sales_channel AS canal,
+SUM(amount) AS total
+FROM orders
+GROUP BY canal
+ORDER BY total DESC`,
     parameters: [],
-    columns: [
-      { name: 'category', type: ColumnType.STRING, nullable: false, description: 'Catégorie' },
-      { name: 'count', type: ColumnType.NUMBER, nullable: false, description: 'Nombre de produits' },
-      { name: 'avg_price', type: ColumnType.NUMBER, nullable: false, description: 'Prix moyen' }
-    ],
-    visualization: {
-      type: VisualizationType.PIE_CHART,
-      config: {
-        title: 'Répartition par Catégorie',
-        showLegend: true,
-        colors: ['#EF4444', '#10B981', '#F59E0B', '#8B5CF6', '#06B6D4']
-      }
+    categoryId: 'cat-sales',
+    vizConfig: {
+      type: VizType.DONUT,
+      title: 'Ventes par canal',
+      mapping: {
+        label: 'canal',
+        value: 'total'
+      },
+      useCustomColors: true,
+      colors: ['#2563EB', '#38BDF8', '#0F766E', '#F59E0B']
     },
-    createdAt: new Date('2024-01-05'),
-    updatedAt: new Date('2024-01-20')
+    status: SqlViewStatus.READY,
+    createdAt: new Date('2026-03-18T10:20:00Z'),
+    updatedAt: new Date('2026-05-02T16:45:00Z')
   },
   {
-    id: '3',
-    name: 'Clients Actifs',
-    description: 'Liste des clients actifs avec statistiques',
-    datasourceId: '3', // SQL Server
-    query: 'SELECT c.name, c.email, COUNT(o.id) as order_count, SUM(o.amount) as total_spent FROM customers c LEFT JOIN orders o ON c.id = o.customer_id WHERE c.status = \'active\' AND o.order_date >= DATEADD(month, -6, GETDATE()) GROUP BY c.id, c.name, c.email ORDER BY total_spent DESC',
-    parameters: [],
-    columns: [
-      { name: 'name', type: ColumnType.STRING, nullable: false, description: 'Nom du client' },
-      { name: 'email', type: ColumnType.STRING, nullable: false, description: 'Email' },
-      { name: 'order_count', type: ColumnType.NUMBER, nullable: false, description: 'Nombre de commandes' },
-      { name: 'total_spent', type: ColumnType.NUMBER, nullable: false, description: 'Total dépensé' }
-    ],
-    visualization: {
-      type: VisualizationType.TABLE,
-      config: {
-        title: 'Clients Actifs (6 derniers mois)'
-      }
-    },
-    createdAt: new Date('2024-01-10'),
-    updatedAt: new Date('2024-01-25')
-  },
-  {
-    id: '4',
-    name: 'Performance des Produits',
-    description: 'Analyse comparative des produits',
-    datasourceId: '4', // Oracle
-    query: 'SELECT p.name, p.category, SUM(oi.quantity) as total_quantity, SUM(oi.quantity * oi.unit_price) as total_revenue FROM products p JOIN order_items oi ON p.id = oi.product_id WHERE oi.order_date BETWEEN TO_DATE($start_date, \'YYYY-MM-DD\') AND TO_DATE($end_date, \'YYYY-MM-DD\') GROUP BY p.id, p.name, p.category ORDER BY total_revenue DESC FETCH FIRST 10 ROWS ONLY',
+    id: 'sqlv-3',
+    name: 'Top clients encore à qualifier',
+    datasourceId: '1',
+    sql: `-- Vue encore en construction
+SELECT customer_name,
+SUM(amount) AS total_spend
+FROM orders
+WHERE segment = :segment
+GROUP BY customer_name`,
     parameters: [
       {
-        name: 'start_date',
-        type: ParameterType.STRING,
+        name: 'segment',
+        label: 'Segment',
+        type: ParamType.LIST_STATIC,
         required: true,
-        description: 'Date de début (YYYY-MM-DD)'
-      },
-      {
-        name: 'end_date',
-        type: ParameterType.STRING,
-        required: true,
-        description: 'Date de fin (YYYY-MM-DD)'
+        staticOptions: [
+          { label: 'Enterprise', value: 'enterprise' },
+          { label: 'SMB', value: 'smb' },
+          { label: 'Retail', value: 'retail' }
+        ]
       }
     ],
-    columns: [
-      { name: 'name', type: ColumnType.STRING, nullable: false, description: 'Nom du produit' },
-      { name: 'category', type: ColumnType.STRING, nullable: false, description: 'Catégorie' },
-      { name: 'total_quantity', type: ColumnType.NUMBER, nullable: false, description: 'Quantité totale' },
-      { name: 'total_revenue', type: ColumnType.NUMBER, nullable: false, description: 'Revenus totaux' }
-    ],
-    visualization: {
-      type: VisualizationType.BAR_CHART,
-      config: {
-        title: 'Top 10 Produits par Revenus',
-        xAxis: 'name',
-        yAxis: 'total_revenue',
-        groupBy: 'category',
-        showLegend: true,
-        showGrid: true,
-        colors: ['#3B82F6', '#EF4444', '#10B981']
-      }
-    },
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-30')
+    categoryId: 'cat-growth',
+    vizConfig: null,
+    status: SqlViewStatus.DRAFT,
+    createdAt: new Date('2026-04-11T08:00:00Z'),
+    updatedAt: new Date('2026-05-01T11:00:00Z')
   }
 ];
+
+export const mockDashboardUsage: Record<string, string[]> = {
+  'sqlv-1': ['Dashboard Finance Global', 'Dashboard Direction'],
+  'sqlv-2': ['Dashboard Revenus'],
+  'sqlv-3': []
+};
+
+export const mockListSqlValues: Record<string, Array<{ label: string; value: any }>> = {
+  region: [
+    { label: 'EMEA', value: 'emea' },
+    { label: 'APAC', value: 'apac' },
+    { label: 'Amériques', value: 'americas' }
+  ],
+  pays: [
+    { label: 'France', value: 'fr' },
+    { label: 'Cameroun', value: 'cm' },
+    { label: 'Canada', value: 'ca' }
+  ]
+};
+
+export const mockSqlViewDatasourceOptions = mockDatasources.map((datasource) => ({
+  id: datasource.id,
+  name: datasource.name
+}));
+
+export const mockRawResults: Record<string, QueryResult> = {
+  revenue: {
+    columns: [
+      { name: 'mois', type: ColumnType.DATE },
+      { name: 'revenu', type: ColumnType.NUMBER }
+    ],
+    rows: [
+      { mois: '2026-01-01', revenu: 15200 },
+      { mois: '2026-02-01', revenu: 18420 },
+      { mois: '2026-03-01', revenu: 17110 },
+      { mois: '2026-04-01', revenu: 22490 }
+    ],
+    rowCount: 4,
+    executionTimeMs: 184,
+    compatibleViz: [
+      {
+        type: VizType.LINE,
+        compatible: true,
+        confidence: 'high',
+        suggestedMapping: { xAxis: 'mois', yAxis: ['revenu'] }
+      },
+      {
+        type: VizType.AREA,
+        compatible: true,
+        confidence: 'medium',
+        suggestedMapping: { xAxis: 'mois', yAxis: ['revenu'] }
+      },
+      {
+        type: VizType.BAR,
+        compatible: true,
+        confidence: 'medium',
+        suggestedMapping: { xAxis: 'mois', yAxis: ['revenu'] }
+      },
+      {
+        type: VizType.TABLE,
+        compatible: true,
+        confidence: 'high',
+        suggestedMapping: {}
+      }
+    ]
+  },
+  pie: {
+    columns: [
+      { name: 'canal', type: ColumnType.TEXT },
+      { name: 'total', type: ColumnType.NUMBER }
+    ],
+    rows: [
+      { canal: 'Direct', total: 42800 },
+      { canal: 'Partner', total: 21900 },
+      { canal: 'Online', total: 30100 }
+    ],
+    rowCount: 3,
+    executionTimeMs: 142,
+    compatibleViz: [
+      {
+        type: VizType.PIE,
+        compatible: true,
+        confidence: 'high',
+        suggestedMapping: { label: 'canal', value: 'total' }
+      },
+      {
+        type: VizType.DONUT,
+        compatible: true,
+        confidence: 'high',
+        suggestedMapping: { label: 'canal', value: 'total' }
+      },
+      {
+        type: VizType.BAR,
+        compatible: true,
+        confidence: 'medium',
+        suggestedMapping: { xAxis: 'canal', yAxis: ['total'] }
+      },
+      {
+        type: VizType.TABLE,
+        compatible: true,
+        confidence: 'high',
+        suggestedMapping: {}
+      }
+    ]
+  },
+  scatter: {
+    columns: [
+      { name: 'sessions', type: ColumnType.NUMBER },
+      { name: 'conversion_rate', type: ColumnType.NUMBER },
+      { name: 'campaign', type: ColumnType.TEXT }
+    ],
+    rows: [
+      { sessions: 2200, conversion_rate: 2.1, campaign: 'Brand' },
+      { sessions: 1580, conversion_rate: 3.6, campaign: 'SEM' },
+      { sessions: 990, conversion_rate: 4.4, campaign: 'Retargeting' },
+      { sessions: 4200, conversion_rate: 1.7, campaign: 'SEO' }
+    ],
+    rowCount: 4,
+    executionTimeMs: 228,
+    compatibleViz: [
+      {
+        type: VizType.SCATTER,
+        compatible: true,
+        confidence: 'high',
+        suggestedMapping: { xAxis: 'sessions', yAxis: ['conversion_rate'], label: 'campaign' }
+      },
+      {
+        type: VizType.KPI,
+        compatible: true,
+        confidence: 'low',
+        suggestedMapping: { value: 'conversion_rate' }
+      },
+      {
+        type: VizType.TABLE,
+        compatible: true,
+        confidence: 'high',
+        suggestedMapping: {}
+      }
+    ]
+  },
+  table: {
+    columns: [
+      { name: 'customer_name', type: ColumnType.TEXT },
+      { name: 'total_spend', type: ColumnType.NUMBER }
+    ],
+    rows: [
+      { customer_name: 'Acme Corp', total_spend: 11000 },
+      { customer_name: 'Globex', total_spend: 9400 },
+      { customer_name: 'Wayne Enterprises', total_spend: 8800 }
+    ],
+    rowCount: 3,
+    executionTimeMs: 119,
+    compatibleViz: [
+      {
+        type: VizType.TABLE,
+        compatible: true,
+        confidence: 'high',
+        suggestedMapping: {}
+      },
+      {
+        type: VizType.BAR,
+        compatible: true,
+        confidence: 'medium',
+        suggestedMapping: { xAxis: 'customer_name', yAxis: ['total_spend'] }
+      }
+    ]
+  }
+};

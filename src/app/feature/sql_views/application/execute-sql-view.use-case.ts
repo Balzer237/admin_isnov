@@ -1,14 +1,10 @@
-import { inject, Injectable } from '@angular/core';
-import { SqlViewRepository, SQL_VIEW_REPOSITORY } from '../domain/sql-view.repository';
-import { ExecuteSqlViewDto, SqlViewExecutionResult } from '../domain/sql-view.model';
+import { SqlViewRepository } from '../domain/sql-view.repository';
+import { QueryResult } from '../domain/sql-view.model';
 
-@Injectable({
-  providedIn: 'root'
-})
 export class ExecuteSqlViewUseCase {
-  private repository = inject(SQL_VIEW_REPOSITORY);
+  constructor(private readonly repository: SqlViewRepository) {}
 
-  async execute(id: string, dto: ExecuteSqlViewDto): Promise<SqlViewExecutionResult> {
-    return this.repository.execute(id, dto);
+  execute(id: string, params: Record<string, any>, limit: number): Promise<QueryResult> {
+    return this.repository.execute(id, params, limit);
   }
 }

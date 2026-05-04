@@ -78,7 +78,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private updateBreadcrumbs(): void {
     // Generate breadcrumbs from current route
     const urlSegments = this.router.url.split('/').filter(segment => segment);
-    this.breadcrumbs = [{ label: 'Dashboard', route: '/' }];
+    this.breadcrumbs = [{ label: 'Home', route: '/tenants' }];
 
     let route = '';
     for (const segment of urlSegments) {
@@ -110,7 +110,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
   openQuickAction(action: string): void {
     console.log('Quick action:', action);
     this.showQuickActionsDropdown = false;
-    // Implement quick action
+
+    const quickActionRoutes: Record<string, string> = {
+      user: '/users',
+      report: '/reports',
+      datasource: '/datasources',
+      sqlView: '/sql-views'
+    };
+
+    const route = quickActionRoutes[action];
+    if (route) {
+      this.router.navigate([route]);
+    }
   }
 
   logout(): void {
