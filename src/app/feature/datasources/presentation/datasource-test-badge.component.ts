@@ -7,12 +7,24 @@ import { Datasource, ConnectionStatus } from '../domain/datasource.model';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="flex items-center">
-      <span [ngClass]="getStatusClass(datasource().status)" class="px-2 py-1 rounded text-sm">
+    <div class="flex items-center gap-2">
+      <span
+        [ngClass]="getStatusClass(datasource().status)"
+        class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
+      >
         {{ getStatusLabel(datasource().status) }}
       </span>
-      <button *ngIf="!isTesting()" (click)="test.emit()" class="ml-2 text-blue-600 text-sm">Tester</button>
-      <div *ngIf="isTesting()" class="ml-2 animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+      <button
+        *ngIf="!isTesting()"
+        (click)="test.emit()"
+        class="text-xs font-semibold text-blue-700 hover:text-blue-800 transition"
+      >
+        Tester
+      </button>
+      <div
+        *ngIf="isTesting()"
+        class="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600"
+      ></div>
     </div>
   `,
   styles: []
@@ -24,9 +36,9 @@ export class DatasourceTestBadgeComponent {
 
   getStatusClass(status: ConnectionStatus): string {
     switch (status) {
-      case ConnectionStatus.CONNECTED: return 'bg-green-100 text-green-800';
-      case ConnectionStatus.ERROR: return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case ConnectionStatus.CONNECTED: return 'bg-emerald-100 text-emerald-700';
+      case ConnectionStatus.ERROR: return 'bg-red-100 text-red-700';
+      default: return 'bg-slate-100 text-slate-700';
     }
   }
 

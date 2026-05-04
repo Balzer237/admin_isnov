@@ -78,7 +78,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private updateBreadcrumbs(): void {
     // Generate breadcrumbs from current route
     const urlSegments = this.router.url.split('/').filter(segment => segment);
-    this.breadcrumbs = [{ label: 'Home', route: '/tenants' }];
+    this.breadcrumbs = [{ label: 'Home', route: '/datasources' }];
 
     let route = '';
     for (const segment of urlSegments) {

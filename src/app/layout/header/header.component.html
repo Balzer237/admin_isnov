@@ -60,8 +60,8 @@
       <!-- Quick Actions (Primary Button) -->
       <div class="hidden sm:block relative">
         <button
-          (click)="toggleQuickActionsDropdown()"
-          class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-all shadow-sm hover:shadow-md active:scale-95"
+          disabled
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-300 text-slate-500 text-sm font-semibold transition-all shadow-sm cursor-not-allowed"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -136,79 +136,12 @@
         </div>
       </div>
 
-      <!-- Notifications -->
-      <div class="relative">
-        <button
-          (click)="toggleNotifications()"
-          class="relative p-2 hover:bg-gray-100 rounded-lg transition-colors group"
-        >
-          <svg class="w-5 h-5 text-gray-500 group-hover:text-gray-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-          </svg>
-          <span
-            *ngIf="unreadNotifications > 0"
-            class="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center font-semibold ring-2 ring-white"
-          >
-            {{ unreadNotifications }}
-          </span>
-        </button>
-
-        <!-- Notifications Panel -->
-        <div
-          *ngIf="showNotifications"
-          class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 z-50 origin-top-right transition-all"
-        >
-          <div class="p-4 border-b border-gray-100">
-            <div class="flex items-center justify-between">
-              <h3 class="font-heading font-semibold text-gray-900">Notifications</h3>
-              <span class="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">{{ unreadNotifications }} new</span>
-            </div>
-          </div>
-          <div class="divide-y divide-gray-100 max-h-80 overflow-y-auto">
-            <div class="p-4 hover:bg-gray-50 transition-colors cursor-pointer border-b border-gray-100">
-              <div class="flex items-start gap-3">
-                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-semibold flex-shrink-0">SYS</div>
-                <div class="flex-1 min-w-0">
-                  <div class="text-sm font-semibold text-gray-900">System update completed</div>
-                  <div class="text-xs text-gray-500 mt-0.5">All services are running normally</div>
-                  <div class="text-xs text-gray-400 mt-1">5 minutes ago</div>
-                </div>
-              </div>
-            </div>
-            <div class="p-4 hover:bg-gray-50 transition-colors cursor-pointer border-b border-gray-100">
-              <div class="flex items-start gap-3">
-                <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 text-xs font-semibold flex-shrink-0">RPT</div>
-                <div class="flex-1 min-w-0">
-                  <div class="text-sm font-semibold text-gray-900">Monthly report ready</div>
-                  <div class="text-xs text-gray-500 mt-0.5">Sales performance report for April 2025</div>
-                  <div class="text-xs text-gray-400 mt-1">1 hour ago</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="p-3 border-t border-gray-100">
-            <button class="w-full text-center text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">
-              View all notifications
-            </button>
-          </div>
-        </div>
-      </div>
-
       <!-- User Menu -->
       <div class="relative">
         <button
           (click)="toggleUserDropdown()"
           class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded-xl transition-all"
         >
-          <img
-            *ngIf="currentUser?.avatar"
-            [src]="currentUser?.avatar || ''"
-            [alt]="currentUser?.name || 'User'"
-            class="w-8 h-8 rounded-full object-cover ring-2 ring-gray-100"
-          />
-          <span *ngIf="!currentUser?.avatar" class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-sm font-semibold ring-2 ring-gray-100">
-            {{ currentUser?.name?.charAt(0) || 'U' }}
-          </span>
           <span class="hidden lg:block text-sm font-medium text-gray-700">{{ getUserFirstName() }}</span>
           <svg
             class="chevron-down hidden lg:block w-4 h-4 text-gray-400 transition-transform"
@@ -227,20 +160,9 @@
           class="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50 origin-top-right transition-all"
         >
           <div class="px-4 py-3 border-b border-gray-100">
-            <div class="flex items-center gap-3">
-              <img
-                *ngIf="currentUser?.avatar"
-                [src]="currentUser?.avatar"
-                [alt]="currentUser?.name"
-                class="w-10 h-10 rounded-full"
-              />
-              <span *ngIf="!currentUser?.avatar" class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold">
-                {{ currentUser?.name?.charAt(0) || 'U' }}
-              </span>
-              <div>
-                <div class="text-sm font-semibold text-gray-900">{{ currentUser?.name }}</div>
-                <div class="text-xs text-gray-500">{{ currentUser?.email }}</div>
-              </div>
+            <div>
+              <div class="text-sm font-semibold text-gray-900">{{ currentUser?.name }}</div>
+              <div class="text-xs text-gray-500">{{ currentUser?.email }}</div>
             </div>
           </div>
           <div class="py-1">

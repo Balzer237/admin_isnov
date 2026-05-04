@@ -21,34 +21,13 @@ import { createSqlViewStore } from './sql-view.store';
 
       <div class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
         <div class="mb-6 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-          <div class="grid flex-1 gap-3 md:grid-cols-[minmax(0,1fr)_12rem_12rem]">
+          <div class="flex-1">
             <input
               [(ngModel)]="searchTerm"
               (ngModelChange)="page.set(1)"
-              class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-100"
+              class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-100"
               placeholder="Rechercher par nom ou catégorie..."
             />
-
-            <select
-              [(ngModel)]="selectedCategoryId"
-              (ngModelChange)="page.set(1)"
-              class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
-            >
-              <option value="">Toutes les catégories</option>
-              @for (category of store.categories(); track category.id) {
-                <option [value]="category.id">{{ category.label }}</option>
-              }
-            </select>
-
-            <select
-              [(ngModel)]="selectedStatus"
-              (ngModelChange)="page.set(1)"
-              class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
-            >
-              <option value="">Tous les statuts</option>
-              <option [value]="sqlViewStatus.READY">Prêtes</option>
-              <option [value]="sqlViewStatus.DRAFT">Brouillons</option>
-            </select>
           </div>
 
           <button
@@ -179,13 +158,6 @@ import { createSqlViewStore } from './sql-view.store';
                         </button>
                         <button
                           type="button"
-                          class="rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-white"
-                          (click)="store.duplicate(view.id)"
-                        >
-                          Dupliquer
-                        </button>
-                        <button
-                          type="button"
                           class="rounded-xl border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50"
                           (click)="openDelete(view.id)"
                         >
@@ -246,8 +218,6 @@ export class SqlViewListComponent {
   protected readonly pendingDependencies = signal<string[]>([]);
 
   protected searchTerm = '';
-  protected selectedCategoryId = '';
-  protected selectedStatus = '';
   protected readonly pageSize = 10;
   protected readonly skeletonRows = [1, 2, 3, 4, 5];
   protected readonly skeletonCells = [1, 2, 3, 4, 5, 6, 7, 8];
@@ -257,9 +227,7 @@ export class SqlViewListComponent {
     return this.store.sqlViews().filter((view) => {
       const category = this.getCategory(view.categoryId)?.label.toLowerCase() ?? '';
       const matchesSearch = !query || view.name.toLowerCase().includes(query) || category.includes(query);
-      const matchesCategory = !this.selectedCategoryId || view.categoryId === this.selectedCategoryId;
-      const matchesStatus = !this.selectedStatus || view.status === this.selectedStatus;
-      return matchesSearch && matchesCategory && matchesStatus;
+      return matchesSearch;
     });
   });
 

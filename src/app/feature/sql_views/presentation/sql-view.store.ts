@@ -3,7 +3,6 @@ import { mockDatasources } from '../../datasources/infrastructure/datasource.moc
 import { CreateCategoryUseCase } from '../application/create-category.use-case';
 import { CreateSqlViewUseCase } from '../application/create-sql-view.use-case';
 import { DeleteSqlViewUseCase } from '../application/delete-sql-view.use-case';
-import { DuplicateSqlViewUseCase } from '../application/duplicate-sql-view.use-case';
 import { ExecuteRawSqlUseCase } from '../application/execute-raw-sql.use-case';
 import { ExecuteSqlViewUseCase } from '../application/execute-sql-view.use-case';
 import { GetAllSqlViewsUseCase } from '../application/get-all-sql-views.use-case';
@@ -62,7 +61,6 @@ export interface SqlViewStore {
   toggleCustomColors(): void;
   updateVizColors(colors: string[]): void;
   saveView(): Promise<SqlView | null>;
-  duplicate(id: string): Promise<void>;
   delete(id: string): Promise<void>;
   createCategory(label: string, color?: string): Promise<SqlViewCategory>;
   resetEditor(): void;
@@ -92,7 +90,6 @@ export function createSqlViewStore(): SqlViewStore {
   const deleteUseCase = new DeleteSqlViewUseCase(repository);
   const executeUseCase = new ExecuteSqlViewUseCase(repository);
   const executeRawUseCase = new ExecuteRawSqlUseCase(repository);
-  const duplicateUseCase = new DuplicateSqlViewUseCase(repository);
   const getCategoriesUseCase = new GetCategoriesUseCase(repository);
   const createCategoryUseCase = new CreateCategoryUseCase(repository);
 
@@ -499,19 +496,6 @@ export function createSqlViewStore(): SqlViewStore {
     }
   };
 
-  const duplicate = async (id: string) => {
-    loading.set(true);
-    error.set(null);
-    try {
-      const duplicated = await duplicateUseCase.execute(id);
-      sqlViews.update((items) => [duplicated, ...items]);
-    } catch (caught) {
-      error.set(caught instanceof Error ? caught.message : 'Erreur lors de la duplication.');
-    } finally {
-      loading.set(false);
-    }
-  };
-
   const deleteView = async (id: string) => {
     loading.set(true);
     error.set(null);
@@ -594,7 +578,6 @@ export function createSqlViewStore(): SqlViewStore {
     toggleCustomColors,
     updateVizColors,
     saveView,
-    duplicate,
     delete: deleteView,
     createCategory,
     resetEditor,

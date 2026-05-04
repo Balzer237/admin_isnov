@@ -209,6 +209,98 @@ p.subtitle,
   position: relative;
 }
 
+/* Global border-radius for consistent modern design */
+button,
+input,
+select,
+textarea,
+.card,
+.modal,
+.table,
+.sidebar-item,
+.nav-item,
+.form-group,
+.page-content,
+.page-header,
+.toolbar,
+.empty-state,
+.badge,
+.modal-overlay,
+.modal-container {
+  border-radius: 12px !important;
+}
+
+/* Ensure specific elements maintain proper border-radius */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="search"],
+textarea,
+select {
+  border-radius: 12px !important;
+}
+
+/* Cards and containers */
+.card,
+.modal,
+.table,
+.page-content,
+.page-header {
+  border-radius: 12px !important;
+}
+
+/* Sidebar and navigation items */
+.sidebar-item,
+.nav-item,
+.sidebar-section {
+  border-radius: 12px !important;
+}
+
+/* Form elements */
+.form-group input,
+.form-group select,
+.form-group textarea,
+.form-control {
+  border-radius: 12px !important;
+}
+
+/* Buttons */
+.btn,
+.button,
+.action-btn {
+  border-radius: 12px !important;
+}
+
+/* Badges and status indicators */
+.badge,
+.status-badge,
+.inline-flex {
+  border-radius: 12px !important;
+}
+
+/* Tables */
+table,
+.table-container,
+.data-table {
+  border-radius: 12px !important;
+}
+
+table tr {
+  border-radius: 12px !important;
+}
+
+table td:first-child {
+  border-top-left-radius: 12px !important;
+  border-bottom-left-radius: 12px !important;
+}
+
+table td:last-child {
+  border-top-right-radius: 12px !important;
+  border-bottom-right-radius: 12px !important;
+}
+
 .active-nav-item::before {
   content: '';
   position: absolute;
